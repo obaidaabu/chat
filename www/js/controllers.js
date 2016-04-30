@@ -56,11 +56,13 @@ angular.module('controllers', [])
 
     $scope.sendMessage = function() {
       var ref1 = new Firebase("https://chatoi.firebaseio.com/chats/"+$scope.createrId+"/"+window.localStorage['userId']+"/messages");
-      $scope.messages1= $firebaseArray(ref1);
-      $scope.messages1.$add({ body: $scope.messageContent});
+      var newMessageRef1 = ref1.push();
+      newMessageRef1.set({ body: $scope.messageContent});
+
       var ref2 = new Firebase("https://chatoi.firebaseio.com/chats/"+$scope.createrId+"/"+$scope.createrId+"/messages");
-      $scope.messages2= $firebaseArray(ref2);
-      $scope.messages2.$add({ body: $scope.messageContent});
+      var newMessageRef2 = ref2.push();
+      newMessageRef2.set({ body: $scope.messageContent});
+      newMessageRef2.setPriority(1000);
     }
 
 
@@ -114,15 +116,6 @@ angular.module('controllers', [])
   })
   .controller('MessagesCtrl', function($scope,$firebaseArray) {
     var ref = new Firebase("https://chatoi.firebaseio.com/chats/"+window.localStorage['userId']);
-    ref.on('value', function(snapshot) {
-      snapshot.forEach(function(childSnapshot) {
-        // key will be "fred" the first time and "barney" the second time
-        var key = childSnapshot.key();
-        // childData will be the actual contents of the child
-        var childData = childSnapshot.val();
-      });
-      console.log(snapshot.key() + " was " + snapshot.val().height + " meters tall");
-    });
 
     $scope.messages = $firebaseArray(ref);
     $scope.ss = function(id){
