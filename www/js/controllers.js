@@ -114,13 +114,23 @@ angular.module('controllers', [])
   })
   .controller('MessagesCtrl', function($scope,$firebaseArray) {
     var ref = new Firebase("https://chatoi.firebaseio.com/chats/"+window.localStorage['userId']);
+    ref.on('value', function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        // key will be "fred" the first time and "barney" the second time
+        var key = childSnapshot.key();
+        // childData will be the actual contents of the child
+        var childData = childSnapshot.val();
+      });
+      console.log(snapshot.key() + " was " + snapshot.val().height + " meters tall");
+    });
+
     $scope.messages = $firebaseArray(ref);
     $scope.ss = function(id){
-      var ref1 = new Firebase("https://chatoi.firebaseio.com/chats/"+window.localStorage['userId']+"/"+id+"/messages");
-      ref1.orderByChild("weight").limitToLast(1).on("child_added", function(snapshot) {
-        console.log(snapshot.val());
-
-
+      var ref = new Firebase("https://chatoi.firebaseio.com/chats/"+window.localStorage['userId']);
+      ref.orderByChild("height").on("child_added", function(snapshot) {
+        var user=
+        $scope.messages.push();
+        console.log(snapshot.key() + " was " + snapshot.val().height + " meters tall");
       });
       console.log($scope.messages)
     }

@@ -5,7 +5,7 @@
 
       <a ng-click="ss(message.$id)" class="item item-avatar"  ng-repeat="message in messages">
         <img src="venkman.jpg">
-        <h2>{{message.messages.last().body}}</h2>
+        <h2>{{message.messages.$last.body}}</h2>
         <p>{{message.body}}</p>
       </a>
 
