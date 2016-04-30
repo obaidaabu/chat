@@ -50,15 +50,15 @@ angular.module('controllers', [])
   })
   .controller('ChatCtrl', function($scope,$state, Pubnub,$firebaseArray) {
     $scope.createrId = $state.params.createrId;
-    var ref = new Firebase("https://chatoi.firebaseio.com/chats/"+$scope.createrId+"/"+window.localStorage['userId']);
+    var ref = new Firebase("https://chatoi.firebaseio.com/chats/"+$scope.createrId+"/"+window.localStorage['userId']+"/messages");
     $scope.messages = $firebaseArray(ref);
 
 
     $scope.sendMessage = function() {
-      var ref1 = new Firebase("https://chatoi.firebaseio.com/chats/"+$scope.createrId+"/"+window.localStorage['userId']);
+      var ref1 = new Firebase("https://chatoi.firebaseio.com/chats/"+$scope.createrId+"/"+window.localStorage['userId']+"/messages");
       $scope.messages1= $firebaseArray(ref1);
       $scope.messages1.$add({ body: $scope.messageContent});
-      var ref2 = new Firebase("https://chatoi.firebaseio.com/chats/"+$scope.createrId+"/"+$scope.createrId);
+      var ref2 = new Firebase("https://chatoi.firebaseio.com/chats/"+$scope.createrId+"/"+$scope.createrId+"/messages");
       $scope.messages2= $firebaseArray(ref2);
       $scope.messages2.$add({ body: $scope.messageContent});
     }
@@ -112,26 +112,18 @@ angular.module('controllers', [])
 
     }
   })
-  .controller('MessagesCtrl', function($scope,$state,SubjectService) {
-    var uuid=angular.fromJson(window.localStorage['uuid']);
+  .controller('MessagesCtrl', function($scope,$firebaseArray) {
+    var ref = new Firebase("https://chatoi.firebaseio.com/chats/"+window.localStorage['userId']);
+    $scope.messages = $firebaseArray(ref);
+    $scope.ss = function(id){
+      var ref1 = new Firebase("https://chatoi.firebaseio.com/chats/"+window.localStorage['userId']+"/"+id+"/messages");
+      ref1.orderByChild("weight").limitToLast(1).on("child_added", function(snapshot) {
+        console.log(snapshot.val());
 
-    $scope.subjects=[];
-    SubjectService.GetSubjects()
-      .then(function (subjects) {
-        angular.copy(subjects,$scope.subjects);
-      }, function (err) {
+
       });
-    $scope.createSubject = function(){
-      var subject = {
-        title : $scope.title,
-        user : window.localStorage['userId']
-      }
-      SubjectService.CreateSubject(subject)
-        .then(function () {
-
-        }, function (err) {
-        });
-
+      console.log($scope.messages)
     }
+
   });
 

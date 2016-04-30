@@ -2,10 +2,12 @@
   <ion-content ng-controller="SubjectsCtrl">
     <div class="list">
 
-      <a class="item" ng-repeat="subject in subjects" href="#/chat/{{subject.user._id}}">
-        <h3>{{subject.title}}</h3>
-      </a>
 
+      <a ng-click="ss(message.$id)" class="item item-avatar"  ng-repeat="message in messages">
+        <img src="venkman.jpg">
+        <h2>{{message.messages.last().body}}</h2>
+        <p>{{message.body}}</p>
+      </a>
 
 
     </div>
