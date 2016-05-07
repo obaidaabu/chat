@@ -28,7 +28,8 @@ app.run(function ($ionicPlatform,$state) {
 
     $stateProvider.state('login', {
       url: '/login',
-      templateUrl: 'templates/login.html'
+      templateUrl: 'templates/login.html',
+      controller:"LoginCtrl"
     });
     $stateProvider.state('chat', {
       url: '/chat/:createrId',

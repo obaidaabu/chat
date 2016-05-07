@@ -2,8 +2,8 @@ angular.module('services', [])
   .factory('ConfigurationService', function () {
     return {
       ServerUrl: function () {
-        //return "https://chatad.herokuapp.com";
-          return "http://localhost:3000";
+        return "https://chatad.herokuapp.com";
+          //return "http://localhost:3000";
       }
     }
   })
