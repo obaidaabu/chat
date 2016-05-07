@@ -1,0 +1,17 @@
+<ion-view>
+  <header-bar></header-bar>
+  <ion-content ng-controller="SubjectsCtrl">
+    <div class="list">
+
+
+      <a ng-click="ss(message.$id)" class="item item-avatar"  ng-repeat="message in messages">
+        <img src="venkman.jpg">
+        <h2>{{message.senderId}}</h2>
+        <p>{{message.lastMessage}}</p>
+      </a>
+
+
+    </div>
+  </ion-content>
+</ion-view>
+

@@ -48,7 +48,16 @@ angular.module('controllers', [])
     $scope.messages = [];
 
   })
-  .controller('ChatCtrl', function($scope,$state, Pubnub,$firebaseArray) {
+  .controller('AppsCtrl', function($scope,$ionicHistory) {
+    $scope.GoBack = function() {
+
+      $ionicHistory.goBack();
+
+    };
+
+
+  })
+  .controller('ChatCtrl', function($scope,$state,$firebaseArray) {
     $scope.createrId = $state.params.createrId;
     var ref = new Firebase("https://chatoi.firebaseio.com/chats/"+$scope.createrId+"/"+window.localStorage['userId']+"/messages");
     $scope.messages = $firebaseArray(ref);
@@ -69,14 +78,9 @@ angular.module('controllers', [])
 
 
   })
+
   .controller('LoginCtrl', function($scope,$state,$ionicPlatform,UserService) {
-    $ionicPlatform.ready(function () {
-      var uuid= window.localStorage['userId'];
-      if(uuid&&uuid !='undefined'){
-        $scope.uuid=uuid;
-        $state.go("subjects");
-      }
-    });
+
     $scope.userId ="";
     $scope.login = function(){
       var user = {
@@ -89,10 +93,10 @@ angular.module('controllers', [])
         }, function (err) {
         });
 
-      $state.go("subjects");
+      $state.go("tab.subjects");
     }
   })
-  .controller('SubjectsCtrl', function($scope,$state,SubjectService) {
+  .controller('SubjectsCtrl', function($scope,$rootScope,$state,$ionicHistory,SubjectService,EntityService) {
     var uuid=angular.fromJson(window.localStorage['uuid']);
 
     $scope.subjects=[];
@@ -101,22 +105,33 @@ angular.module('controllers', [])
         angular.copy(subjects,$scope.subjects);
       }, function (err) {
       });
-    $scope.createSubject = function(){
+    $scope.create = function(){
       var subject = {
-        title : $scope.title,
-        user : window.localStorage['userId']
+        title : $rootScope.subjectTitle,
+        user : window.localStorage['userId'],
+        description: $rootScope.subjectDesc
       }
       SubjectService.CreateSubject(subject)
         .then(function () {
 
         }, function (err) {
         });
-
+      $ionicHistory.goBack();
+    }
+    $scope.goToChat =function(subject){
+      $state.go('chat',{createrId:subject.user._id})
+    }
+    $scope.deleteSubject =function(subject){
+      SubjectService.DeleteSubjects(subject)
+        .then(function () {
+          EntityService.deleteFromArray($scope.subjects,subject);
+        }, function (err) {
+        });
     }
   })
   .controller('MessagesCtrl', function($scope,$firebaseArray) {
     var ref = new Firebase("https://chatoi.firebaseio.com/chats/"+window.localStorage['userId']);
-    
+
     var list = $firebaseArray(ref)
     var unwatch = list.$watch(function() {
 
@@ -143,6 +158,7 @@ angular.module('controllers', [])
 
 
     $scope.ss = function(id){
+
       var ref = new Firebase("https://chatoi.firebaseio.com/chats/"+window.localStorage['userId']);
       ref.orderByChild("height").on("child_added", function(snapshot) {
 

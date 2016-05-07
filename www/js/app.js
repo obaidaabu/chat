@@ -1,7 +1,7 @@
 (function() {
-var app = angular.module('ionicApp', ['ionic','firebase','controllers','services','pubnub.angular.service']);
+var app = angular.module('ionicApp', ['ionic','controllers','services','directives','firebase']);
 
-app.run(function ($ionicPlatform) {
+app.run(function ($ionicPlatform,$state) {
   $ionicPlatform.ready(function () {
     if (window.cordova && window.cordova.plugins.Keyboard) {
 
@@ -12,6 +12,14 @@ app.run(function ($ionicPlatform) {
     }
     if (window.StatusBar) {
       StatusBar.styleDefault();
+    }
+    var uuid= window.localStorage['userId'];
+    if(uuid&&uuid !='undefined'){
+
+      $state.go("tab.subjects");
+    }
+    else{
+      $state.go("login");
     }
   });
 })
@@ -31,17 +39,35 @@ app.run(function ($ionicPlatform) {
       url: '/addSubjects',
       templateUrl: 'templates/add-subjects.html'
     });
-    $stateProvider.state('subjects', {
-      url: '/subjects',
-      templateUrl: 'templates/subjects.html',
-      controller:"SubjectsCtrl"
-    });
+
     $stateProvider.state('messages', {
       url: '/messages',
       templateUrl: 'templates/messages.html',
       controller:"MessagesCtrl"
+    })
+    .state('tab', {
+      url: '/tab',
+
+      templateUrl: 'templates/tabs.html'
+    })
+    .state('tab.subjects', {
+      url: '/subjects',
+      views: {
+        'subjects-page': {
+          templateUrl: 'templates/subjects.html'
+        }
+      }
+    })
+    .state('tab.messages', {
+      url: '/messages',
+      views: {
+        'messages-page': {
+          templateUrl: 'templates/messages.html',
+          controller:"MessagesCtrl"
+        }
+      }
     });
-    $urlRouterProvider.otherwise('/login');
+
   }) .directive('input', function($timeout) {
     return {
       restrict: 'E',

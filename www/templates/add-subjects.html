@@ -1,13 +1,14 @@
-<ion-view>
+<ion-view ng-controller="SubjectsCtrl">
+  <header-back-create-bar></header-back-create-bar>
   <ion-content ng-controller="SubjectsCtrl">
-    <div class="list">
-      <label class="item item-input">
-        <input ng-model="title" type="text" placeholder="Subject Name">
-      </label>
-      <button ng-click="createSubject()" class="button button-positive">
-        create
-      </button>
-    </div>
+    <div class="add-subject padding-15px">
+
+      <input ng-model="$root.subjectTitle" type="text"  placeholder="Subject Name">
+      <textarea ng-model="$root.subjectDesc" placeholder="Description"></textarea>
+
+
+      </div>
+
 
   </ion-content>
 </ion-view>

@@ -1,7 +1,57 @@
+.tab-item .icon{
+  display: none !important;
+}
+.bar.bar-positive{
+  background-color: #055f54 !important;
+}
+.tabs-striped.tabs-background-positive .tabs{
+  background-color: #055f54 !important;
+}
+.tab-title{
+  font-weight: bold;
+}
+.tabs-top > .tabs, .tabs.tabs-top{
+  top: 43px;
+}
 
-
+.bar .button.button-icon, .bar button.button-icon{
+  font-size: 14px !important;
+}
 .scroll {
   padding: 10px 0 50px !important;
+}
+
+.padding-15px{
+  padding: 15px;
+}
+.button-bg{
+  height: 50px;
+  border-bottom-color: #055F54 !important;
+  border-bottom-width: 3px;
+  font-size: 25px !important;
+  background-color: #138879 !important;
+  font-weight: bold;
+}
+.add-subject input,textarea{
+  font-size: 17px !important;
+  border: 1px solid #bbbbbb;
+  border-radius: 3px;
+  height: 45px !important;
+  padding: 10px !important;
+  width: 100%;
+  top: 20px;
+}
+.add-subject textarea{
+  margin-top:10px ;
+  height: 145px !important;
+
+}
+.item-options .button{
+  background-color: transparent;
+}
+.item-options .button:before{
+  font-size: 30px;
+  color: #864141;
 }
 .messages {
   display: -webkit-box !important;
@@ -57,7 +107,7 @@
    transform: translate3d(130px, 0, 0) !important;
  }
 }
-//This will change
+
   .messages.other {
 .message {
   -webkit-transform: translate3d(0, 0, 0) !important;
@@ -70,17 +120,4 @@
   -moz-transform: translate3d(120px, 0, 0) !important;
   transform: translate3d(120px, 0, 0) !important;
 }
-span {
-  color: black !important;
-  background-color: #C7C7CC !important;
-}
-}
-span {
-  background: #007AFF !important;
-  display: inline-block !important;
-  color: white !important;
-  padding: 10px !important;
-  border-radius: 10px !important;
-  text-align: left !important;
-  max-width: 240px !important;
-}
+

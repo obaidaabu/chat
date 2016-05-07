@@ -1,0 +1,15 @@
+<ion-view >
+  <header-bar></header-bar>
+  <ion-content ng-controller="SubjectsCtrl">
+    <div class="list">
+
+      <a class="item" ng-repeat="subject in subjects" href="#/chat/{{subject.user._id}}">
+        <h3>{{subject.title}}</h3>
+      </a>
+
+
+
+    </div>
+  </ion-content>
+</ion-view>
+
