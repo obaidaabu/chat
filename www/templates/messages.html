@@ -1,10 +1,10 @@
 <ion-view>
   <header-bar></header-bar>
-  <ion-content ng-controller="SubjectsCtrl">
+  <ion-content >
     <ion-list>
 
 
-      <ion-item ng-click="ss(message.$id)" class="item-avatar"  ng-repeat="message in messages">
+      <ion-item ng-click="goToChat(message.senderId)" class="item-avatar"  ng-repeat="message in messages">
         <img src="venkman.jpg">
         <h2>{{message.senderId}}</h2>
         <p>{{message.lastMessage}}</p>

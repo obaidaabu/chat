@@ -2,8 +2,8 @@ angular.module('services', [])
   .factory('ConfigurationService', function () {
     return {
       ServerUrl: function () {
-        return "https://chatad.herokuapp.com";
-         // return "http://10.0.0.4:3000";
+        //return "https://chatad.herokuapp.com";
+          return "http://localhost:3000";
       }
     }
   })
@@ -33,9 +33,9 @@ angular.module('services', [])
   })
   .factory('SubjectService', function ($http, $log, $q, ConfigurationService) {
     return {
-      GetSubjects: function () {
+      GetSubjects: function (userID) {
         var deferred = $q.defer();
-        $http.get(ConfigurationService.ServerUrl() + '/api/subjects' , {
+        $http.get(ConfigurationService.ServerUrl() + '/api/subjects?_id='+userID , {
           headers: {
 
           }

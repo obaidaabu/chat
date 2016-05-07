@@ -50,7 +50,7 @@ angular.module('controllers', [])
   })
   .controller('AppsCtrl', function($scope,$ionicHistory) {
     $scope.GoBack = function() {
-
+debugger
       $ionicHistory.goBack();
 
     };
@@ -59,16 +59,16 @@ angular.module('controllers', [])
   })
   .controller('ChatCtrl', function($scope,$state,$firebaseArray) {
     $scope.createrId = $state.params.createrId;
-    var ref = new Firebase("https://chatoi.firebaseio.com/chats/"+$scope.createrId+"/"+window.localStorage['userId']+"/messages");
+    var ref = new Firebase("https://chataaa.firebaseio.com/chats/"+$scope.createrId+"/"+window.localStorage['userId']+"/messages");
     $scope.messages = $firebaseArray(ref);
 
 
     $scope.sendMessage = function() {
-      var ref1 = new Firebase("https://chatoi.firebaseio.com/chats/"+$scope.createrId+"/"+window.localStorage['userId']+"/messages");
+      var ref1 = new Firebase("https://chataaa.firebaseio.com/chats/"+$scope.createrId+"/"+window.localStorage['userId']+"/messages");
       var newMessageRef1 = ref1.push();
       newMessageRef1.set({ body: $scope.messageContent});
 
-      var ref2 = new Firebase("https://chatoi.firebaseio.com/chats/"+window.localStorage['userId']+"/"+$scope.createrId+"/messages");
+      var ref2 = new Firebase("https://chataaa.firebaseio.com/chats/"+window.localStorage['userId']+"/"+$scope.createrId+"/messages");
       var newMessageRef2 = ref2.push();
       newMessageRef2.set({ body: $scope.messageContent});
       newMessageRef2.setPriority(1000);
@@ -98,9 +98,9 @@ angular.module('controllers', [])
   })
   .controller('SubjectsCtrl', function($scope,$rootScope,$state,$ionicHistory,SubjectService,EntityService) {
     var uuid=angular.fromJson(window.localStorage['uuid']);
-
+var userId=window.localStorage['userId']
     $scope.subjects=[];
-    SubjectService.GetSubjects()
+    SubjectService.GetSubjects(userId)
       .then(function (subjects) {
         angular.copy(subjects,$scope.subjects);
       }, function (err) {
@@ -129,14 +129,15 @@ angular.module('controllers', [])
         });
     }
   })
-  .controller('MessagesCtrl', function($scope,$firebaseArray) {
-    var ref = new Firebase("https://chatoi.firebaseio.com/chats/"+window.localStorage['userId']);
+  .controller('MessagesCtrl', function($scope,$firebaseArray,$state ) {
+    var ref = new Firebase("https://chataaa.firebaseio.com/chats/"+window.localStorage['userId']);
 
     var list = $firebaseArray(ref)
     var unwatch = list.$watch(function() {
 
       list.$loaded()
         .then(function(x) {
+        debugger
           $scope.messages = [];
           angular.forEach(x, function(value, key) {
 
@@ -156,10 +157,14 @@ angular.module('controllers', [])
 
 
 
-
+$scope.goToChat =function(userId){
+debugger
+      $state.go('chat',{createrId:userId})
+    }
     $scope.ss = function(id){
+debugger
 
-      var ref = new Firebase("https://chatoi.firebaseio.com/chats/"+window.localStorage['userId']);
+      var ref = new Firebase("https://chataaa.firebaseio.com/chats/"+window.localStorage['userId']);
       ref.orderByChild("height").on("child_added", function(snapshot) {
 
 
