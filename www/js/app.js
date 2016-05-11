@@ -1,5 +1,5 @@
 (function () {
-  var app = angular.module('ionicApp', ['ionic', 'controllers', 'services', 'directives', 'firebase']);
+  var app = angular.module('starter', ['ionic', 'controllers', 'services', 'directives','firebase', 'ngCordova']);
 
   app.run(function ($ionicPlatform, $state) {
     $ionicPlatform.ready(function () {
@@ -37,9 +37,9 @@
           templateUrl: 'templates/chat.html',
           controller: "ChatCtrl"
         })
-        .state('addSubjects', {
-          url: '/addSubjects',
-          templateUrl: 'templates/add-subjects.html',
+        .state('addSubject', {
+          url: '/addSubject',
+          templateUrl: 'templates/add-subject.html',
           controller: "addSubjectsCtrl"
         })
 

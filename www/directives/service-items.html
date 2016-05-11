@@ -1,0 +1,12 @@
+<div class="page services-page clearfix">
+  <div class="full full-services">
+        <ul   class="service-list">
+          <li ng-repeat="service in services" ng-class="service.service_type_id.image" ng-click="ServiceDetails(service)" >
+            <a><span>{{service.name}}</span></a>
+          </li>
+        </ul>
+  </div>
+</div>
+
+
+

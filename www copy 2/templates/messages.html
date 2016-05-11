@@ -1,0 +1,16 @@
+<ion-view>
+  <header-bar></header-bar>
+  <ion-content>
+    <ion-list>
+      <ion-item ng-click="goToChat(message.senderId)" class="item-avatar" ng-repeat="message in messages">
+        <img src="venkman.jpg">
+
+        <h2>{{message.senderId}}</h2>
+
+        <p>{{message.lastMessage}}</p>
+        <ion-option-button class="button-positive ion-android-remove-circle"></ion-option-button>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>
+
