@@ -1,14 +1,14 @@
 angular.module('controllers', [])
-  .controller('TabsCtrl', function($scope, $ionicSideMenuDelegate) {
+  .controller('TabsCtrl', function ($scope, $ionicSideMenuDelegate) {
 
-  $scope.openMenu = function () {
-    $ionicSideMenuDelegate.toggleLeft();
-  }
+    $scope.openMenu = function () {
+      $ionicSideMenuDelegate.toggleLeft();
+    }
 
-})
-  .controller('AppCtrl', function($scope, $state) {
+  })
+  .controller('AppCtrl', function ($scope, $state) {
 
-    $scope.addSubjectView = function(){
+    $scope.addSubjectView = function () {
       $state.go('addSubject');
     }
 
@@ -27,29 +27,61 @@ angular.module('controllers', [])
         });
     }
     $scope.GoBack = function () {
-     // $state.go("tab.subjects");
+      // $state.go("tab.subjects");
       $ionicHistory.goBack();
     }
 
   })
   .controller('ChatCtrl', function ($scope, $state, $firebaseArray) {
-    $scope.createrId = $state.params.createrId;
-    $scope.userId=window.localStorage['userId'];
-    var ref = new Firebase("https://chatoi.firebaseio.com/chats/" + $scope.createrId + "/" + window.localStorage['userId'] + "/messages");
-    $scope.messages = $firebaseArray(ref);
+    $scope.conversationId = $state.params.conversationId;
+
+    $scope.userId = window.localStorage['userId'];
+    var myUrl = "https://chataaa.firebaseio.com/chats/" + window.localStorage['userId'] + "/" + $scope.conversationId;
+    var ref = new Firebase(myUrl + "/messages");
+    var list = $firebaseArray(ref);
+    var isFirstMessage = false;
+    //var unwatch = list.$watch(function () {
+
+    list.$loaded()
+      .then(function (x) {
+        $scope.messages = x;
+        if (x.length == 0) {
+          isFirstMessage = true;
+        }
+      });
+
+
+    //});
     $scope.sendMessage = function () {
-      var ref1 = new Firebase("https://chatoi.firebaseio.com/chats/" + $scope.createrId + "/" + window.localStorage['userId'] + "/messages");
-      var newMessageRef1 = ref1.push();
-      newMessageRef1.set({body: $scope.messageContent,sender:window.localStorage['userId']});
-      var ref2 = new Firebase("https://chatoi.firebaseio.com/chats/" + window.localStorage['userId'] + "/" + $scope.createrId + "/messages");
-      var newMessageRef2 = ref2.push();
-      newMessageRef2.set({body: $scope.messageContent,sender:window.localStorage['userId']});
+      var otherUrl = "https://chataaa.firebaseio.com/chats/" + $scope.conversationId.split("-")[0] + "/" + window.localStorage['userId'] + '-' + $scope.conversationId.split("-")[1];
+      var ref2, ref1;
+      debugger
+      if (isFirstMessage) {
+        ref2 = new Firebase(otherUrl);
+        ref1 = new Firebase(myUrl);
+        var newMessageRef1 = ref1.push();
+        ref1.set({messages: [{body: $scope.messageContent, sender: window.localStorage['userId']}],userName:$state.params.userName,subjectName:$state.params.subjectName});
+        var newMessageRef2 = ref2.push();
+        ref2.set({messages: [{body: $scope.messageContent, sender: window.localStorage['userId']}],userName:$state.params.userName,subjectName:$state.params.subjectName});
+        isFirstMessage=false;
+      }
+      else {
+        ref2 = new Firebase(otherUrl + "/messages");
+        ref1 = new Firebase(myUrl + "/messages");
+        var newMessageRef1 = ref1.push();
+        newMessageRef1.set({body: $scope.messageContent, sender: window.localStorage['userId']});
+        var newMessageRef2 = ref2.push();
+        newMessageRef2.set({body: $scope.messageContent, sender: window.localStorage['userId']});
+      }
+
+
       delete $scope.messageContent;
     }
 
   })
 
-  .controller('LoginCtrl', function ($scope, $state, $ionicPlatform, UserService) {
+  .
+  controller('LoginCtrl', function ($scope, $state, $ionicPlatform, UserService) {
     $scope.userId = "";
     $scope.login = function () {
       var user = {
@@ -76,7 +108,7 @@ angular.module('controllers', [])
       });
 
     $scope.goToChat = function (subject) {
-      $state.go('chat', {createrId: subject.user._id})
+      $state.go('chat', {conversationId: subject.user._id + "-" + subject._id,userName:subject.user.userName,subjectName:subject.title})
     }
     $scope.deleteSubject = function (subject) {
       SubjectService.DeleteSubjects(subject)
@@ -87,7 +119,7 @@ angular.module('controllers', [])
     }
   })
   .controller('MessagesCtrl', function ($scope, $firebaseArray, $state) {
-    var ref = new Firebase("https://chatoi.firebaseio.com/chats/" + window.localStorage['userId']);
+    var ref = new Firebase("https://chataaa.firebaseio.com/chats/" + window.localStorage['userId']);
     var list = $firebaseArray(ref)
     var unwatch = list.$watch(function () {
 
@@ -95,19 +127,20 @@ angular.module('controllers', [])
         .then(function (x) {
           $scope.messages = [];
           angular.forEach(x, function (value, key) {
-            var senderId = value.$id;
+            debugger
+            var conversationId = value.$id;
             var messagesArray = Object.getOwnPropertyNames(value.messages);
             var lastMessageKey = messagesArray[messagesArray.length - 1];
             var lastMessage = value.messages[lastMessageKey].body;
-            $scope.messages.push({senderId: senderId, lastMessage: lastMessage});
+            $scope.messages.push({conversationId: conversationId, lastMessage: lastMessage,subjectName:value.subjectName,userName:value.userName});
           }, x);
         })
         .catch(function (error) {
           console.log("Error:", error);
         });
     });
-    $scope.goToChat = function (userId) {
-      $state.go('chat', {createrId: userId})
+    $scope.goToChat = function (conversationId) {
+      $state.go('chat', {conversationId: conversationId})
     }
   });
 

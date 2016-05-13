@@ -33,7 +33,7 @@
       })
 
         .state('chat', {
-          url: '/chat/:createrId',
+          url: '/chat/:conversationId/:userName/:subjectName',
           templateUrl: 'templates/chat.html',
           controller: "ChatCtrl"
         })
