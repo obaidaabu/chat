@@ -1,7 +1,16 @@
 (function () {
   var app = angular.module('starter', ['ionic', 'controllers', 'services', 'directives','firebase', 'ngCordova']);
 
-  app.run(function ($ionicPlatform, $state) {
+  app.run(function ($ionicPlatform,$rootScope , $state) {
+    $rootScope.rootChatCounter = 0;
+    $ionicPlatform.on('pause', function() {
+      Firebase.goOffline();
+
+    });
+    $ionicPlatform.on('resume', function() {
+      Firebase.goOnline();
+
+    });
     $ionicPlatform.ready(function () {
       if (window.cordova && window.cordova.plugins.Keyboard) {
 
@@ -9,6 +18,20 @@
 
 
         cordova.plugins.Keyboard.disableScroll(true);
+      }
+      if(window.cordova && typeof window.plugins.OneSignal != 'undefined'){
+        var notificationOpenedCallback = function (jsonData) {
+
+
+          $rootScope.technicalOrgId = jsonData.additionalData.org_id;
+          $rootScope.technicalServiceId = jsonData.additionalData.service_id;
+          $state.go("technical");
+
+        };
+        window.plugins.OneSignal.init("ee6f85c1-a2ff-4d1b-9fa6-29dd4cc306ef",
+          { googleProjectNumber: "238478083352" },
+          notificationOpenedCallback);
+        window.plugins.OneSignal.enableNotificationsWhenActive(false);
       }
       if (window.StatusBar) {
         StatusBar.styleDefault();

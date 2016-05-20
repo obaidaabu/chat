@@ -3,7 +3,7 @@ angular.module('services', [])
     return {
       ServerUrl: function () {
         return "https://chatad.herokuapp.com";
-          //return "http://localhost:3000";
+        //  return "http://192.168.1.14:3000";
       }
     }
   })
@@ -15,7 +15,7 @@ angular.module('services', [])
         $http.post(ConfigurationService.ServerUrl() + '/api/users',
           {
             "userName": user.userName,
-            "password": user.pass
+            "password": user.userPass
           }
           , {
             headers: {

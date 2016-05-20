@@ -28,15 +28,25 @@ angular.module('controllers', [])
     }
     $scope.GoBack = function () {
       // $state.go("tab.subjects");
+      // $state.go("tab.subjects");
       $ionicHistory.goBack();
     }
 
   })
-  .controller('ChatCtrl', function ($scope, $state, $firebaseArray) {
+  .controller('ChatCtrl', function ($scope, $state, $firebaseArray,$firebaseObject) {
     $scope.conversationId = $state.params.conversationId;
 
     $scope.userId = window.localStorage['userId'];
-    var myUrl = "https://chataaa.firebaseio.com/chats/" + window.localStorage['userId'] + "/" + $scope.conversationId;
+    var createrId = $scope.conversationId.split("-")[0];
+    var userRef = new Firebase('https://chatoi.firebaseio.com/presence/'+createrId);
+    userRef.on("value", function(userSnapshot) {
+      if(userSnapshot.val() == 'offline'){
+
+      }
+    });
+    //var createrUser = userRef.val(createrId);
+    debugger
+    var myUrl = "https://chatoi.firebaseio.com/chats/" + window.localStorage['userId'] + "/" + $scope.conversationId;
     var ref = new Firebase(myUrl + "/messages");
     var list = $firebaseArray(ref);
     var isFirstMessage = false;
@@ -53,9 +63,8 @@ angular.module('controllers', [])
 
     //});
     $scope.sendMessage = function () {
-      var otherUrl = "https://chataaa.firebaseio.com/chats/" + $scope.conversationId.split("-")[0] + "/" + window.localStorage['userId'] + '-' + $scope.conversationId.split("-")[1];
+      var otherUrl = "https://chatoi.firebaseio.com/chats/" + $scope.conversationId.split("-")[0] + "/" + window.localStorage['userId'] + '-' + $scope.conversationId.split("-")[1];
       var ref2, ref1;
-      debugger
       if (isFirstMessage) {
         ref2 = new Firebase(otherUrl);
         ref1 = new Firebase(myUrl);
@@ -82,24 +91,45 @@ angular.module('controllers', [])
 
   .
   controller('LoginCtrl', function ($scope, $state, $ionicPlatform, UserService) {
-    $scope.userId = "";
+    $scope.user = {
+      userName:'',
+      userPass:''
+    }
     $scope.login = function () {
-      var user = {
-        userName: $scope.username,
-        pass: $scope.pass
-      }
-      UserService.CreateUser(user)
+      UserService.CreateUser($scope.user)
         .then(function (user) {
           window.localStorage['userId'] = user._id;
+          $state.go("tab.subjects");
         }, function (err) {
         });
 
-      $state.go("tab.subjects");
+
     }
   })
-  .controller('SubjectsCtrl', function ($scope, $rootScope, $state, $ionicHistory, SubjectService, EntityService) {
+  .controller('SubjectsCtrl', function ($scope,$ionicPlatform, $rootScope, $state, $ionicHistory, SubjectService, EntityService) {
+
+
     var uuid = angular.fromJson(window.localStorage['uuid']);
     var userId = window.localStorage['userId']
+    var amOnline = new Firebase('https://chatoi.firebaseio.com/.info/connected');
+    var userRef = new Firebase('https://chatoi.firebaseio.com/presence/' + userId);
+
+    amOnline.on('value', function(snapshot) {
+      if (snapshot.val()) {
+
+        userRef.onDisconnect().set('offline');
+        userRef.set('online');
+      }
+    });
+    //document.onIdle = function () {
+    //  userRef.set('☆ idle');
+    //}
+    //document.onAway = function () {
+    //  userRef.set('☄ away');
+    //}
+    //document.onBack = function (isIdle, isAway) {
+    //  userRef.set('★ online');
+    //}
     $scope.subjects = [];
     SubjectService.GetSubjects(userId)
       .then(function (subjects) {
@@ -118,21 +148,36 @@ angular.module('controllers', [])
         });
     }
   })
-  .controller('MessagesCtrl', function ($scope, $firebaseArray, $state) {
-    var ref = new Firebase("https://chataaa.firebaseio.com/chats/" + window.localStorage['userId']);
+  .controller('MessagesCtrl', function ($scope,$rootScope, $firebaseArray, $state) {
+    var ref = new Firebase("https://chatoi.firebaseio.com/chats/" + window.localStorage['userId']);
+    ref.on("child_added", function(snapshot) {
+      var user = snapshot.val();
+
+
+    });
     var list = $firebaseArray(ref)
     var unwatch = list.$watch(function () {
 
       list.$loaded()
         .then(function (x) {
           $scope.messages = [];
+          $rootScope.rootChatCounter=$rootScope.rootChatCounter+1;
           angular.forEach(x, function (value, key) {
-            debugger
+
             var conversationId = value.$id;
             var messagesArray = Object.getOwnPropertyNames(value.messages);
             var lastMessageKey = messagesArray[messagesArray.length - 1];
             var lastMessage = value.messages[lastMessageKey].body;
-            $scope.messages.push({conversationId: conversationId, lastMessage: lastMessage,subjectName:value.subjectName,userName:value.userName});
+            var createrId = conversationId.split("-")[0];
+            var userRef = new Firebase('https://chatoi.firebaseio.com/presence/'+createrId);
+            var online =false;
+            userRef.on("value", function(userSnapshot) {
+              if(userSnapshot.val() == 'offline'){
+                online = false;
+              }
+            });
+            $scope.messages.push({conversationId: conversationId, lastMessage: lastMessage,
+              subjectName:value.subjectName,userName:value.userName, online:online});
           }, x);
         })
         .catch(function (error) {
