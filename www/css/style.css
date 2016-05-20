@@ -108,8 +108,8 @@
 
 }
 .online-circle{
-  color: green !important;
+  color: green;
 }
 .offline-circle{
-  color: red !important;
+  color: red ;
 }

@@ -170,14 +170,19 @@ angular.module('controllers', [])
             var lastMessage = value.messages[lastMessageKey].body;
             var createrId = conversationId.split("-")[0];
             var userRef = new Firebase('https://chatoi.firebaseio.com/presence/'+createrId);
-            var online =false;
+
             userRef.on("value", function(userSnapshot) {
+              $scope.messages = [];
+              var online =true;
               if(userSnapshot.val() == 'offline'){
                 online = false;
+
               }
+              $scope.messages.push({conversationId: conversationId, lastMessage: lastMessage,
+                subjectName:value.subjectName,userName:value.userName, online:online});
+              $scope.$apply();
             });
-            $scope.messages.push({conversationId: conversationId, lastMessage: lastMessage,
-              subjectName:value.subjectName,userName:value.userName, online:online});
+
           }, x);
         })
         .catch(function (error) {
